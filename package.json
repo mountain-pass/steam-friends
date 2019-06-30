@@ -7,8 +7,10 @@
     "engines": {
         "node": "=7.10.0"
     },
-    "dependencies": {},
-    "devDependencies": {
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
         "express": "4.15.3",
         "request": "2.81.0",
         "request-promise": "^4.2.1"
