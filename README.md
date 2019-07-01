@@ -1,16 +1,15 @@
 # steam-friends
 Shows common games between all your friends.
 
-## Usage
+# Running Locally
 
-```Shell
-npm install
-node express.js <YOUR_STEAM_API_KEY>
+```sh
+docker run -it -e STEAM_API_KEY=XXXXX -p 3000:3000 mountainpass/steam-friends
 ```
+ 
+Then open the url: 
 
-Then simply navigate to the following url (based on your Steam Id): 
-
-- [http://127.0.0.1:3000/api/friends/<YOUR_STEAM_ID>](http://127.0.0.1:3000/api/friends/<YOUR_STEAM_ID>)
+- [http://127.0.0.1:3000/](http://127.0.0.1:3000/)
 
 ## See also 
 
