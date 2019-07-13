@@ -1,0 +1,80 @@
+html,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: lightgray;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+    box-shadow: 3px 3px 3px grey;
+    border: 1px solid grey;
+    background: white;
+    margin: 15px auto;
+    padding: 15px;
+    border-radius: 15px;
+    width: 50%;
+    min-width: 800px;
+}
+
+.subtext {
+    color: red;
+    font-size: 12px;
+}
+
+input[type=text] {
+    padding: 4px 8px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 3px 3px 3px grey;
+    font-size: 12px;
+}
+
+thead,
+th,
+td {
+    border: 1px solid grey;
+    padding: 2px 4px;
+}
+
+thead,
+thead * {
+    position: -webkit-sticky;
+    position: -moz-sticky;
+    position: -ms-sticky;
+    position: -o-sticky;
+    position: sticky;
+    top: -1px;
+    z-index: 10;
+    background: lightblue;
+}
+
+.center {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+input[type=submit] {
+    background: white;
+    border: 2px solid blue;
+    box-shadow: 5px 5px 5px grey;
+    font-size: 1em;
+    padding: 0.5em 1em;
+    border-radius: 2em;
+}
+
+input[type=submit]:hover {
+    cursor: pointer;
+    background: lightgray;
+}
+
+.green {
+    background: lightgreen;
+}
