@@ -175,7 +175,7 @@ app.route('/friends/games')
                     res.write('</th></tr>');
 
                     // game headers
-                    res.write(`<tr>${headers.map(x => `<th>${x}</th>`).join('')}<th></th><th></th><th></th></tr>`)
+                    res.write(`<tr>${headers.map(x => `<th>${x}</th>`).join('')}<th></th>${friends.map(x => '<th></th>').join('')}</tr>`)
 
                     res.write('</thead><tbody>')
 
