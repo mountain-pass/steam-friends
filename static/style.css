@@ -44,7 +44,21 @@ td {
 }
 
 thead,
-thead * {
+thead *,
+.blue {
+    background: lightblue;
+}
+.fixed_header tbody{
+    display:block;
+    overflow:auto;
+    height:200px;
+    width:100%;
+}
+.fixed_header thead tr{
+    display:block;
+}
+.sticky_thead thead,
+.sticky_thead thead * {
     position: -webkit-sticky;
     position: -moz-sticky;
     position: -ms-sticky;
@@ -52,7 +66,6 @@ thead * {
     position: sticky;
     top: -1px;
     z-index: 10;
-    background: lightblue;
 }
 
 .center {
