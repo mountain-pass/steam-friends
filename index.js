@@ -11,8 +11,8 @@ const get = url => {
 let { STEAM_API_KEY: steamApiKey = 'NOT_SET', PORT: port = '3000' } = process.env
 port = parseInt(port)
 
-// const BASE_URL = 'http://api.steampowered.com'
-const BASE_URL = 'http://localhost:6000'
+const BASE_URL = 'http://api.steampowered.com'
+// const BASE_URL = 'http://localhost:6000'
 
 if (steamApiKey === 'NOT_SET') {
     return console.log("\nPlease pass the STEAM_API_KEY as an environment variable." +
