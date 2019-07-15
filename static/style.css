@@ -135,6 +135,12 @@ label {
     font-size: 14px;
     box-shadow: 3px 3px 3px lightgray;
 }
+
+@media (max-width: 767px) {
+    [card] {
+        width: 100%;
+    }
+}
 [card] > [card-body] > *:nth-child(1n+2) {
     margin-top: 5px;
 }
