@@ -163,7 +163,7 @@ app.route('/friends/games')
 
                     addHeaders(res)
 
-                    res.write('<h1>Shared games (unsorted)...</h1><hr/>')
+                    res.write('<h1>Shared games...</h1><hr/>')
                     res.write('<table>')
                     res.write('<thead>')
 
