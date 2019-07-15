@@ -199,17 +199,21 @@ app.route('/friends/games')
                                 ${
                                     friends.map(f => {
                                         const userGame = f.gamesByAppId[game.appid]
-                                        if (userGame && userGame.playtime_forever > 0) {
-                                            return `<th class="green">
-                                                <div>
-                                                    <span user_playtime_number>${userGame ? userGame.playtime_forever.toLocaleString() : ''}</span> mins
-                                                </div>
-                                                <div>
-                                                <span game_playtime_percent>${userGame ? Math.round(userGame.playtime_forever / game.playtime_forever * 100) + '%' : ''}</span>
-                                                /
-                                                <span user_playtime_percent>${userGame ? Math.round(userGame.playtime_forever / f.game_minutes * 100) + '%' : ''}</span>
-                                                </div>
-                                            </th>`
+                                        if (userGame) {
+                                            if (userGame.playtime_forever > 0) {
+                                                return `<th class="green">
+                                                    <div>
+                                                        <span user_playtime_number>${userGame ? userGame.playtime_forever.toLocaleString() : ''}</span> mins
+                                                    </div>
+                                                    <div>
+                                                    <span game_playtime_percent>${userGame ? Math.round(userGame.playtime_forever / game.playtime_forever * 100) + '%' : ''}</span>
+                                                    /
+                                                    <span user_playtime_percent>${userGame ? Math.round(userGame.playtime_forever / f.game_minutes * 100) + '%' : ''}</span>
+                                                    </div>
+                                                </th>`
+                                            } else {
+                                                return `<th class="green">-</th>`
+                                            }
                                         } else {
                                             return `<th></th>`
                                         }
