@@ -119,8 +119,9 @@ app.route('/friends')
 
 app.route('/friends/games')
     .get((req, res) => {
-        const { friendIds: filteredFriendIds } = req.query
+        let { friendIds: filteredFriendIds = [] } = req.query
         var promises = []
+        if (!Array.isArray(filteredFriendIds)) filteredFriendIds = [filteredFriendIds]
         promises.push(API.getFriendSummaries(filteredFriendIds))
         filteredFriendIds.forEach(friendId => promises.push(API.getOwnedGames(friendId)))
 
@@ -132,7 +133,7 @@ app.route('/friends/games')
                     const friendsBySteamId = reduce(friendSummaries.response.players, 'steamid')
                     const friends = filteredFriendIds.map((id, idx) => {
                         const friend = friendsBySteamId[id]
-                        const { game_count, games } = ownedGamesByUser[idx].response
+                        const { game_count = 0, games = [] } = ownedGamesByUser[idx].response
                         friend.game_count = game_count
                         friend.game_minutes = arrSum(games.map(g => g.playtime_forever))
                         friend.gamesByAppId = reduce(games, 'appid')
@@ -141,7 +142,7 @@ app.route('/friends/games')
 
                     // map of games...
                     var gamesByAppId = {};
-                    ownedGamesByUser.forEach(({response: { games }}) => {
+                    ownedGamesByUser.forEach(({response: { games = [] }}) => {
                         games.forEach(g => {
                             let game = gamesByAppId[g.appid]
                             if (typeof game === 'undefined') {
@@ -201,14 +202,17 @@ app.route('/friends/games')
                                         const userGame = f.gamesByAppId[game.appid]
                                         if (userGame) {
                                             if (userGame.playtime_forever > 0) {
-                                                return `<th class="green">
+                                                const userPercentage = Math.round(userGame.playtime_forever / f.game_minutes * 100)
+                                                const gamePercentage = Math.round(userGame.playtime_forever / game.playtime_forever * 100)
+                                                return `
+                                                <th class="green ${userPercentage < 2.5 ? 'fade_25' : userPercentage < 5 ? 'fade_50' : userPercentage < 7.5 ? 'fade_75' : ''}">
                                                     <div>
-                                                        <span user_playtime_number>${userGame ? userGame.playtime_forever.toLocaleString() : ''}</span> mins
+                                                        <span user_playtime_number>${userGame.playtime_forever.toLocaleString()}</span> mins
                                                     </div>
                                                     <div>
-                                                    <span game_playtime_percent>${userGame ? Math.round(userGame.playtime_forever / game.playtime_forever * 100) + '%' : ''}</span>
+                                                    <span game_playtime_percent>${gamePercentage}%</span>
                                                     /
-                                                    <span user_playtime_percent>${userGame ? Math.round(userGame.playtime_forever / f.game_minutes * 100) + '%' : ''}</span>
+                                                    <span user_playtime_percent>${userPercentage}%</span>
                                                     </div>
                                                 </th>`
                                             } else {

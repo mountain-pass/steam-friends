@@ -161,3 +161,12 @@ label {
 [profile] {
     padding: 5px;
 }
+.fade_75 {
+    opacity: 0.8;
+}
+.fade_50 {
+    opacity: 0.6;
+}
+.fade_25 {
+    opacity: 0.4;
+}
