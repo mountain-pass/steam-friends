@@ -1,0 +1,34 @@
+{
+  "proxy": "/",
+  "startTimestamp": 1563194644209,
+  "endTimestamp": 1563194645248,
+  "duration": 1039,
+  "request": {
+    "method": "GET",
+    "url": "/IPlayerService/GetOwnedGames/v0001/?key=00287AF0DE79195C9ABDB2CE4E2AAEF8&steamid=76561198065880220&include_appinfo=1&include_played_free_games=1",
+    "proxyTo": "http://api.steampowered.com",
+    "headers": {
+      "host": "localhost:6000",
+      "accept": "application/json",
+      "connection": "close"
+    },
+    "params": {},
+    "query": {
+      "key": "00287AF0DE79195C9ABDB2CE4E2AAEF8",
+      "steamid": "76561198065880220",
+      "include_appinfo": "1",
+      "include_played_free_games": "1"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "x-eresult": "1",
+      "content-type": "application/json; charset=UTF-8",
+      "expires": "Mon, 15 Jul 2019 12:44:05 GMT",
+      "date": "Mon, 15 Jul 2019 12:44:05 GMT",
+      "content-length": "17671",
+      "connection": "close"
+    }
+  }
+}

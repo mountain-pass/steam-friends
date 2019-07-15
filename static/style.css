@@ -15,12 +15,11 @@ body {
     margin: 15px auto;
     padding: 15px;
     border-radius: 15px;
-    width: 50%;
-    min-width: 800px;
+    width: 80%;
 }
 
 .subtext {
-    color: red;
+    color: grey;
     font-size: 12px;
 }
 
@@ -88,6 +87,77 @@ input[type=submit]:hover {
     background: lightgray;
 }
 
+label {
+    font-weight: bold;
+    margin-right: 4px;
+}
+
 .green {
     background: lightgreen;
+}
+
+.searchName {
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+}
+.searchName input[type=text] {
+    font-size: 18px;
+}
+
+[card] {
+    display: inline-block;
+}
+[card] input[type=checkbox] {
+    position: absolute;
+    transform: scale(2) translate(10px, 10px);
+    cursor: pointer;
+}
+[card] input[type=checkbox]:checked + [card-body] { 
+    border: 1px solid green;
+    background: lightgreen;
+}
+[card] [image] {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+[card] > [card-body] {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid grey;
+    border-radius: 5px;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+    margin: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+    box-shadow: 3px 3px 3px lightgray;
+}
+[card] > [card-body] > *:nth-child(1n+2) {
+    margin-top: 5px;
+}
+
+[game_count] {
+    color: rgba(0,0,0,0.6);
+}
+
+[game_playtime_total], [game_playtime_percent] {
+    color: purple;
+}
+
+[game_minutes], [user_playtime_percent] {
+    color: blue;
+}
+
+[user_playtime_number] {
+    font-size: 1.4em;
+}
+
+[start_again] {
+    float: right;
+}
+[profile] {
+    padding: 5px;
 }

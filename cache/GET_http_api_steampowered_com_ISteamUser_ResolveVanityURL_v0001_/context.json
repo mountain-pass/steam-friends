@@ -1,0 +1,31 @@
+{
+  "proxy": "/",
+  "startTimestamp": 1563194284310,
+  "endTimestamp": 1563194284987,
+  "duration": 677,
+  "request": {
+    "method": "GET",
+    "url": "/ISteamUser/ResolveVanityURL/v0001/?key=00287AF0DE79195C9ABDB2CE4E2AAEF8&&vanityurl=greal5",
+    "proxyTo": "http://api.steampowered.com",
+    "headers": {
+      "host": "localhost:6000",
+      "accept": "application/json",
+      "connection": "close"
+    },
+    "params": {},
+    "query": {
+      "key": "00287AF0DE79195C9ABDB2CE4E2AAEF8",
+      "vanityurl": "greal5"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=UTF-8",
+      "expires": "Mon, 15 Jul 2019 12:38:04 GMT",
+      "date": "Mon, 15 Jul 2019 12:38:04 GMT",
+      "content-length": "56",
+      "connection": "close"
+    }
+  }
+}
