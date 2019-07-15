@@ -199,7 +199,7 @@ app.route('/friends/games')
                                 ${
                                     friends.map(f => {
                                         const userGame = f.gamesByAppId[game.appid]
-                                        if (userGame) {
+                                        if (userGame && userGame.playtime_forever > 0) {
                                             return `<th class="green">
                                                 <div>
                                                     <span user_playtime_number>${userGame ? userGame.playtime_forever.toLocaleString() : ''}</span> mins
