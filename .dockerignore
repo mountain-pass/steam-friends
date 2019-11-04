@@ -1,5 +1,6 @@
 *
 
 !index.js
+!package*.json
 !.npmrc
 !static/

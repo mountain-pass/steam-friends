@@ -1,6 +1,6 @@
 
 FROM mountainpass/superlife:node-builder as install
-COPY package*.json ./
+COPY package*.json .npmrc ./
 RUN npm i --production
 COPY . .
 
