@@ -89,7 +89,7 @@ app.route('/friends')
                                 addHeaders(res)
                                 res.write(`
                                 <a start_again href="/">Start again</a>
-                                <h1>Choose friends to search...</h1><hr/>
+                                <h1>Choose friends to compare games...</h1><hr/>
                                 <form action="/friends/games" method="get">
                                 ${friends.map(f => `
                                     <div card>
