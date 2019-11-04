@@ -6,3 +6,4 @@ COPY . .
 
 FROM mountainpass/superlife:node-runtime
 COPY --from=install /root .
+EXPOSE 3000
