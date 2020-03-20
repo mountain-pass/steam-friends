@@ -4,9 +4,6 @@
     "version": "1.0.0",
     "private": true,
     "author": "nickgrealy@gmail.com",
-    "engines": {
-        "node": "=7.10.0"
-    },
     "scripts": {
         "start": "node index.js"
     },

@@ -78,30 +78,49 @@ app.route('/friends')
                 console.log(`mySteamId = ${mySteamId}`)
                 if (mySteamId) {
                     API.getFriends(mySteamId).then(getFriendsRes => {
-                        var friendIds = getFriendsRes.friendslist.friends.map(f => f.steamid)
-                        friendIds.unshift(mySteamId)
+                        var friendsListById = getFriendsRes.friendslist.friends.reduce((prev, f) => { prev[f.steamid] = f; return prev }, {})
+                        var friendIds = Object.keys(friendsListById)
+                        friendIds.unshift(mySteamId) // add my steam id, so I show in the list...
                             // get names of friends...
                         var promises = []
                         promises.push(API.getFriendSummaries(friendIds))
                         Promise.all(promises).then(responses => {
                                 var friends = responses[0].response.players
                                 friends = friends.sort((a, b) => a.personaname.localeCompare(b.personaname))
+                                const NOW = new Date().getTime()/1000
+                                const secondsToDays = (secs) => parseInt(secs / 3600 / 24)
                                 addHeaders(res)
                                 res.write(`
                                 <a start_again href="/">Start again</a>
                                 <h1>Choose friends to compare games...</h1><hr/>
                                 <form action="/friends/games" method="get">
-                                ${friends.map(f => `
+                                ${friends.map(f => {
+                                    const { 
+                                        steamid = '-', 
+                                        avatarmedium = '-', 
+                                        realname = '-', 
+                                        personaname = '-', 
+                                        profileurl = '#', 
+                                        lastlogoff = NOW,
+                                        timecreated = NOW,
+                                 } = f
+                                    const { friend_since } = (friendsListById[f.steamid] || {})
+                                    const friendSince = typeof friend_since === 'number' ? friend_since : timecreated
+                                    const friendsSinceDays = secondsToDays(NOW - friendSince)
+                                    const lastSeen = secondsToDays(NOW - lastlogoff)
+                                    return `
                                     <div card>
-                                        <input type="checkbox" name="friendIds" value="${f.steamid}" ${f.steamid === mySteamId ? 'checked' : ''} />
+                                        <input type="checkbox" name="friendIds" value="${steamid}" ${steamid === mySteamId ? 'checked' : ''} />
                                         <div card-body>
-                                            <div image><img src="${f.avatarmedium}" /></div>
-                                            <div><label>Name:</label><span>${f.realname || '-'}</span></div>
-                                            <div><label>Alias:</label><span>${f.personaname || '-'}</span></div>
-                                            <div><label>SteamId:</label><span><a href="${f.profileurl}" target="_blank">${f.steamid || '-'}</a></span></div>
+                                            <div image><img src="${avatarmedium}" /></div>
+                                            <div><label>Name:</label><span>${realname}</span></div>
+                                            <div><label>Alias:</label><span>${personaname}</span></div>
+                                            <div><label>Friends Since:</label><span>${(friendsSinceDays).toLocaleString()} days</span></div>
+                                            <div><label>Last Seen:</label><span>${(lastSeen).toLocaleString()} days ago</span></div>
+                                            <div><label>SteamId:</label><span><a href="${profileurl}" target="_blank">${steamid}</a></span></div>
                                         </div>
                                     </div>
-                                `).join('')}
+                                `}).join('')}
                                 <p class="center"><input type="submit" value="Next - see shared games" /></p>
                                 </form>
                                 `)
@@ -170,8 +189,8 @@ app.route('/friends/games')
                                 ${friends.map(f => `
                                 <th>
                                     <div profile>
-                                        <div image><img src="${f.avatarmedium}" /></div>
-                                        <div>${f.realname || '-'}</div>
+                                        <div image><a href="${f.profileurl}"><img src="${f.avatarmedium}" /></a></div>
+                                        <div><a href="${f.profileurl}">${f.realname || '-'}</a></div>
                                         <div>"${f.personaname || '-'}"</div>
                                         <div game_count>Games: ${f.game_count.toLocaleString()}</div>
                                         <div game_minutes>Total Minutes: ${f.game_minutes.toLocaleString()}</div>
@@ -193,8 +212,8 @@ app.route('/friends/games')
                         .map(game => {
                             return `
                             <tr>
-                                <th><img src="http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_logo_url}.jpg" /></th>
-                                <th>${game.name}</th>
+                                <th><a href="https://store.steampowered.com/app/${game.appid}"><img src="http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_logo_url}.jpg" /></a></th>
+                                <th><a href="https://store.steampowered.com/app/${game.appid}">${game.name}</a></th>
                                 <th>${game.owners_count}</th>
                                 <th game_playtime_total>${game.playtime_forever.toLocaleString()}</th>
                                 ${
@@ -241,4 +260,4 @@ app.route('/friends/games')
                 })
     })
 
-http.createServer(app).listen(port, () => console.log(`Server started - http://127.0.0.1:3000`))
+http.createServer(app).listen(port, () => console.log(`Server started - http://127.0.0.1:${port}`))
