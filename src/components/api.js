@@ -1,6 +1,6 @@
 const axios = require('axios')
 
-const get = (url) => axios.get(url)
+const get = (url) => axios.get(url).then((result) => result.data)
 
 var API = {}
 API.getVanityUrl = (username) => get(`/api/getVanityUrl?username=${username}`)

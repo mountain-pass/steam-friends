@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "steamfriends",
   "public": false,
   "build": {
     "env": {
@@ -9,7 +8,6 @@
     }
   },
   "env": {
-    "NODE_ENV": "production",
-    "STEAM_API_KEY": "@STEAM_API_KEY"
+    "NODE_ENV": "production"
   }
 }

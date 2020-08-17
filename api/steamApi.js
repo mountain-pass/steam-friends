@@ -3,7 +3,7 @@ const axios = require('axios')
 const steamApiKey = process.env.STEAM_API_KEY
 const BASE_URL = 'http://api.steampowered.com'
 
-const get = (url) => axios.get(url)
+const get = (url) => axios.get(url).then((result) => result.data)
 
 var API = {}
 API.getVanityUrl = (username) =>
