@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "name": "steamfriends",
+  "public": false,
+  "build": {
+    "env": {
+      "NODE_ENV": "production",
+      "GATSBY_NODE_ENV": "production"
+    }
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "STEAM_API_KEY": "@STEAM_API_KEY"
+  }
+}

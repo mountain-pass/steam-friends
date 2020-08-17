@@ -1,0 +1,25 @@
+html {
+  scroll-behavior: smooth;
+}
+html,
+body {
+  width: 100% !important;
+}
+html {
+  height: 100% !important;
+}
+body {
+  min-height: 100% !important;
+  font-family: 'Open Sans', sans-serif;
+  font-display: swap;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body,
+body > div,
+body > div > #gatsby-focus-wrapper,
+body > div > #gatsby-focus-wrapper > div[tabindex][role='group'][style='outline: none;']:not([class]) {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+}
