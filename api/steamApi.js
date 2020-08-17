@@ -11,7 +11,7 @@ API.getVanityUrl = (username) =>
 API.getFriends = (steamId) =>
   get(`${BASE_URL}/ISteamUser/GetFriendList/v0001/?key=${steamApiKey}&steamid=${steamId}&relationship=friend`)
 API.getFriendSummaries = (steamIds) =>
-  get(`${BASE_URL}/ISteamUser/GetPlayerSummaries/v0002/?key=${steamApiKey}&steamids=${steamIds.join(',')}`)
+  get(`${BASE_URL}/ISteamUser/GetPlayerSummaries/v0002/?key=${steamApiKey}&steamids=${steamIds}`)
 API.getOwnedGames = (steamId) =>
   get(
     `${BASE_URL}/IPlayerService/GetOwnedGames/v0001/?key=${steamApiKey}&steamid=${steamId}&include_appinfo=1&include_played_free_games=1`

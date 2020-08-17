@@ -1,13 +1,4 @@
 {
   "version": 2,
-  "public": false,
-  "build": {
-    "env": {
-      "NODE_ENV": "production",
-      "GATSBY_NODE_ENV": "production"
-    }
-  },
-  "env": {
-    "NODE_ENV": "production"
-  }
+  "public": false
 }
