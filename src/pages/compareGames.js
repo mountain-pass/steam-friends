@@ -154,7 +154,16 @@ export default withLocationQueryParams(function Home(props) {
                         src={`http://media.steampowered.com/steamcommunity/public/images/apps/${appid}/${game.icon}.jpg`}
                       />
                     </td>
-                    <td className="p-2 align-middle text-truncate">{game.name}</td>
+                    <td className="p-2 align-middle text-truncate">
+                      <a
+                        className="text-truncate"
+                        href={`https://store.steampowered.com/app/${appid}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {game.name}
+                      </a>
+                    </td>
                     <td className="p-2 align-middle">{game.owners}</td>
                     <td className="p-2 align-middle">{game.playtime.toLocaleString()}</td>
                     {steamIds.map((steamId) => {

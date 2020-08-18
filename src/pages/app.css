@@ -49,3 +49,6 @@ body > div > #gatsby-focus-wrapper > div[tabindex][role='group'][style='outline:
 tr:hover td {
   background: #ffffff;
 }
+.text-truncate {
+  max-width: 1px;
+}
