@@ -1,9 +1,0 @@
-{
-    "ignore": [],
-    "watch": [
-      "src/",
-      "test/",
-      "index.js"
-    ],
-    "ext": "js"
-  }
