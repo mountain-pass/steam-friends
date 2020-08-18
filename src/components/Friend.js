@@ -1,6 +1,9 @@
 import React from 'react'
 import { Badge, Button, Table } from 'react-bootstrap'
 
+export const showNameTextOnly = (friend) =>
+  friend.realname ? friend.realname : friend.personaname ? friend.personaname : ''
+
 export const showName = (friend) => (
   <>
     {friend.realname && friend.personaname ? (
@@ -72,7 +75,7 @@ export const FriendsList = ({ friends = [], updateFriends, filter = '', ...props
               (typeof f.realname === 'string' && f.realname.match(filterRegex)) ||
               (typeof f.personaname === 'string' && f.personaname.match(filterRegex))
           )
-          .sort((a, b) => b.lastlogoff - a.lastlogoff)
+          .sort((a, b) => showNameTextOnly(a).localeCompare(showNameTextOnly(b), undefined, { sensitivity: 'accent' }))
           .map((f) => (
             <tr
               key={f.steamid}

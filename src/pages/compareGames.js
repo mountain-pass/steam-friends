@@ -4,6 +4,7 @@ import usePromise from 'react-use-promise'
 import API from '../components/api'
 import { Input } from '../components/Form'
 import { FriendIcon, showName } from '../components/Friend'
+import Layout from '../components/layout'
 import withLocationQueryParams from '../components/withLocationQueryParams'
 import { navigate } from '@reach/router'
 
@@ -29,9 +30,9 @@ export default withLocationQueryParams(function Home(props) {
 
   // eslint-disable-next-line
   React.useEffect(() => {
-    const { search: { sid = [] } = {} } = props
-    console.log('props', props)
-    if (sid.length > 0) setSteamIds(sid)
+    let { search: { sid = [] } = {} } = props
+    if (typeof sid === 'string') sid = [sid]
+    if (Array.isArray(sid) && sid.length > 0) setSteamIds(sid)
   }, [props.search])
 
   // eslint-disable-next-line
@@ -50,12 +51,12 @@ export default withLocationQueryParams(function Home(props) {
   const { games, users } = gamesResponse || {}
 
   return (
-    <div className="bg-dark text-light d-flex flex-column flex-grow-1 p-3">
+    <Layout title="Compare Games">
       <Container fluid>
         <Button className="mb-3" onClick={navBack}>
           Go Back
         </Button>
-        <h1>SteamFriends &gt; Compare Games</h1>
+        <h1>Compare Games</h1>
         <Table className="bg-white mt-3" responsive>
           <colgroup>
             <col style={{ width: '48px' }}></col>
@@ -181,6 +182,6 @@ export default withLocationQueryParams(function Home(props) {
           </tbody>
         </Table>
       </Container>
-    </div>
+    </Layout>
   )
 })

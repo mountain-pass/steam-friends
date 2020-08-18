@@ -4,6 +4,7 @@ import { FriendsList } from '../components/Friend'
 import { Input } from '../components/Form'
 import styled from 'styled-components'
 import { Link } from 'gatsby'
+import Layout from '../components/layout'
 
 const Scroll = styled.div`
   overflow-y: auto;
@@ -221,7 +222,7 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-dark text-light d-flex flex-column flex-grow-1 p-3">
+    <Layout title="Sandbox">
       <Container>
         <h1>SteamFriends</h1>
         <Button as={Link} to="/compareGames?sid=123&amp;sid=456">
@@ -258,6 +259,6 @@ export default function Home() {
           Compare Games ({friends.filter((f) => f.show === true).length})
         </Button>
       </Container>
-    </div>
+    </Layout>
   )
 }

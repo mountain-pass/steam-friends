@@ -8,6 +8,7 @@ import useDebounce from '../components/useDebounce'
 import styled from 'styled-components'
 import { Link } from 'gatsby'
 import GlobalStoreContext from '../components/GlobalContext'
+import Layout from '../components/layout'
 
 const Scroll = styled.div`
   overflow-y: auto;
@@ -70,7 +71,7 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-dark text-light d-flex flex-column flex-grow-1 p-3">
+    <Layout title="Choose Friends">
       <Container>
         <h1>SteamFriends</h1>
 
@@ -141,6 +142,6 @@ export default function Home() {
           </div>
         )}
       </Container>
-    </div>
+    </Layout>
   )
 }

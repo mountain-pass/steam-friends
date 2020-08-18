@@ -2,7 +2,8 @@ const API = require('./steamApi')
 
 module.exports = async (req, res) => {
   try {
-    const { query: { sid: steamIds = [] } = {} } = req
+    let { query: { sid: steamIds = [] } = {} } = req
+    if (typeof steamIds === 'string') steamIds = [steamIds]
 
     // retrieve all games
     let users = await Promise.all(
