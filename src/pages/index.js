@@ -1,90 +1,145 @@
 import React from 'react'
-import { Container, Form, ListGroup } from 'react-bootstrap'
+import { Container, ButtonGroup, Button, ButtonToolbar } from 'react-bootstrap'
 import usePromise from 'react-use-promise'
-import '../../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import API from '../components/api'
-import Friend from '../components/FriendCard'
+import { Input } from '../components/Form'
+import { FriendsList } from '../components/Friend'
 import useDebounce from '../components/useDebounce'
-import './app.css'
+import styled from 'styled-components'
+import { Link } from 'gatsby'
+import GlobalStoreContext from '../components/GlobalContext'
+
+const Scroll = styled.div`
+  overflow-y: auto;
+  max-height: 50vh;
+`
 
 export default function Home() {
-  const [username, setUsername] = React.useState('')
+  const GC = React.useContext(GlobalStoreContext)
+  const { friends, setFriends } = GC
+  const [localUsername, setLocalUsername] = React.useState(GC.username)
+  const [localSteamId, setLocalSteamId] = React.useState(GC.steamId)
+  const [filter, setFilter] = React.useState('')
 
-  const debouncedUsername = useDebounce(username, 500)
+  const debouncedLocalUsername = useDebounce(localUsername, 500)
+
   // eslint-disable-next-line
-  const [steamid, getSteamIdError, getSteamIdState] = usePromise(() => {
-    if (typeof debouncedUsername === 'string' && debouncedUsername.length > 2) {
-      return API.getVanityUrl(debouncedUsername)
+  let [getSteamIdResult, getSteamIdError, getSteamIdState] = usePromise(() => {
+    if (
+      typeof debouncedLocalUsername === 'string' &&
+      debouncedLocalUsername.trim().length > 2 &&
+      debouncedLocalUsername !== GC.username
+    ) {
+      console.debug('username changed - getSteamId', { debouncedLocalUsername, gcUsername: GC.username })
+      GC.setUsername(debouncedLocalUsername)
+      return API.getSteamId(debouncedLocalUsername)
+        .then((sid) => {
+          setLocalSteamId(sid)
+          return sid
+        })
+        .catch((err) => {
+          console.error(err.message)
+          setLocalSteamId(null)
+          return Promise.reject(err)
+        })
     }
     return Promise.resolve(null)
-  }, [debouncedUsername])
+  }, [GC.username, debouncedLocalUsername])
+
   // eslint-disable-next-line
-  const [friendIds, getFriendIdsError, getFriendIdsState] = usePromise(() => {
-    if (typeof steamid === 'string' && steamid.length > 2) return API.getFriends(steamid)
-    return Promise.resolve(null)
-  }, [steamid])
-  // eslint-disable-next-line
-  const [friends, getFriendsError, getFriendsState] = usePromise(() => {
-    if (friendIds && friendIds.length > 0) {
-      const ids = friendIds.map((f) => f.steamid)
-      ids.push(steamid)
-      return API.getFriendSummaries(ids)
+  let [friendsData, getFriendsError, getFriendsState] = usePromise(() => {
+    if (typeof localSteamId === 'string' && localSteamId.trim().length > 2 && localSteamId !== GC.steamId) {
+      console.debug('steamId changed - getFriends', { localSteamId, gcSteamId: GC.steamId })
+      GC.setSteamId(localSteamId)
+      return API.getFriends(localSteamId).then((data) => {
+        setFriends(data)
+        return data
+      })
+    } else if (localSteamId === null) {
+      GC.setSteamId(null)
+      setFriends([])
     }
     return Promise.resolve(null)
-  }, [steamid, friendIds])
+  }, [localSteamId])
+
+  const showAll = (show = true) => {
+    friends.forEach((f) => {
+      f.show = show
+    })
+    setFriends([...friends])
+  }
 
   return (
     <div className="bg-dark text-light d-flex flex-column flex-grow-1 p-3">
       <Container>
         <h1>SteamFriends</h1>
-        <Form.Group controlId="formBasicPassword">
-          <Form.Label>Username</Form.Label>
-          <Form.Control
-            autoFocus
-            type="text"
-            size="lg"
-            placeholder="Steam username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <Form.Text>
-            Use your Steam login username or custom url. N.B. Ensure your{' '}
-            <a href="https://steamcommunity.com/my/edit/settings">steam profile</a> visibility is public, and you have a
-            Custom URL setup.
-          </Form.Text>
-        </Form.Group>
+
+        {/* <div>GC: {JSON.stringify({ steamId: GC.steamId, username: GC.username, friends: Object.keys(friends).length }, null, 2)}</div>
+        <div>SteamId  States: {JSON.stringify({ getSteamIdResult, getSteamIdError, getSteamIdState, localSteamId }, null, 2)}</div> */}
+
+        {/* username */}
+        <Input
+          placeholder="Steam username"
+          value={localUsername}
+          onChange={(e) => setLocalUsername(e.target.value)}
+          help={
+            <>
+              Use your Steam login username. N.B. Ensure your{' '}
+              <a href="https://steamcommunity.com/my/edit/settings">steam profile</a> visibility is public, and you have
+              a Custom URL setup.
+            </>
+          }
+        />
+
+        {/* status */}
+        {/* eslint-disable */}
         <div>
-          {/* eslint-disable */}
           {getSteamIdState === 'pending'
             ? 'Searching for user...'
-            : getSteamIdState === 'rejected'
+            : getSteamIdState === 'rejected' || (getSteamIdState === 'resolved' && localSteamId === null)
             ? 'User not found.'
-            : getSteamIdState === 'resolved' && steamid !== null
-            ? `Found user - ${steamid}`
+            : getFriendsState === 'pending'
+            ? 'Getting friends details...'
+            : getFriendsState === 'rejected' || (getFriendsState === 'resolved' && friends && friends.length === 0)
+            ? 'No friends found.'
             : null}
-          {/* eslint-enable */}
         </div>
+        {/* eslint-enable */}
 
-        {getFriendIdsState === 'pending' ? (
-          'Getting friends list...'
-        ) : getFriendIdsState === 'rejected' || (friendIds && friendIds.length === 0) ? (
-          'No friends found.'
-        ) : getFriendsState === 'pending' ? (
-          'Getting friends details...'
-        ) : getFriendsState === 'rejected' || (friends && friends.length === 0) ? (
-          'No friends found.'
-        ) : getFriendsState === 'resolved' && friends && friends.length > 0 ? (
+        {/* friends */}
+        {getFriendsState === 'resolved' && friends && friends.length > 0 && (
           <div className="mt-3">
-            <h3>Friends ({friends.sort((a, b) => b.lastlogoff - a.lastlogoff).length})</h3>
-            <ListGroup className="text-dark mt-3">
-              {friends.map((f) => (
-                <ListGroup.Item key={f.steamid}>
-                  <Friend friend={f} />
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
+            <h3>Friends ({friends.length})</h3>
+            <Input placeholder="Filter friends..." value={filter} onChange={(e) => setFilter(e.target.value)} />
+            <ButtonToolbar className="mb-3" aria-label="Toolbar with Button groups">
+              <ButtonGroup aria-label="Basic example" className="ml-auto">
+                <Button variant="light" onClick={() => showAll(true)}>
+                  Show All
+                </Button>
+                <Button variant="light" onClick={() => showAll(false)}>
+                  Hide All
+                </Button>
+              </ButtonGroup>
+            </ButtonToolbar>
+
+            <Scroll className="border rounded">
+              <FriendsList friends={friends} filter={filter} updateFriends={setFriends} />
+            </Scroll>
+
+            <Button
+              as={Link}
+              to={`/compareGames?sid=${friends
+                .filter((f) => f.show === true)
+                .map((f) => f.steamid)
+                .join('&sid=')}`}
+              className={`btn-block mt-3 ${friends.some((f) => f.show === true) ? '' : 'disabled'}`}
+              size="lg"
+              disabled={!friends.some((f) => f.show === true)}
+            >
+              Compare Games ({friends.filter((f) => f.show === true).length})
+            </Button>
           </div>
-        ) : null}
+        )}
       </Container>
     </div>
   )

@@ -27,3 +27,25 @@ body > div > #gatsby-focus-wrapper > div[tabindex][role='group'][style='outline:
 .text-tiny {
   font-size: 0.8rem;
 }
+.text-large {
+  font-size: 1.2rem;
+}
+.highlight {
+  border: 1px solid red;
+}
+.transparent {
+  opacity: 0.5;
+  background: #ebebeb;
+}
+.transparent:hover {
+  opacity: 1;
+}
+.pointer {
+  cursor: pointer;
+}
+.clickthru {
+  pointer-events: none;
+}
+tr:hover td {
+  background: #ffffff;
+}
