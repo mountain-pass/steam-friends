@@ -7,6 +7,7 @@ import { FriendIcon, showName } from '../components/Friend'
 import Layout from '../components/layout'
 import withLocationQueryParams from '../components/withLocationQueryParams'
 import { navigate } from '@reach/router'
+import { Link } from 'gatsby'
 
 const navBack = () => navigate(-1)
 
@@ -53,7 +54,7 @@ export default withLocationQueryParams(function Home(props) {
   return (
     <Layout title="Compare Games">
       <Container fluid>
-        <Button className="mb-3" onClick={navBack}>
+        <Button as={Link} to="/" className="mb-3" onClick={navBack}>
           Go Back
         </Button>
         <h1>Compare Games</h1>
