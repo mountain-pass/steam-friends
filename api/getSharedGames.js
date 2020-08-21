@@ -1,4 +1,4 @@
-const API = require('./steamApi')
+const API = require('./utils/steamApi')
 
 module.exports = async (req, res) => {
   try {

@@ -1,4 +1,4 @@
-const API = require('./steamApi')
+const API = require('./utils/steamApi')
 
 module.exports = (req, res) => {
   let { query: { sid = [] } = {} } = req
