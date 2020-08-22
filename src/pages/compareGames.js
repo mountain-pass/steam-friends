@@ -172,7 +172,7 @@ export default withLocationQueryParams(function Home(props) {
                 )
                 .sort((a, b) => b[1].owners - a[1].owners || b[1].playtime - a[1].playtime)
                 .map(([appid, game]) => {
-                  const {
+                  let {
                     releaseDate = null,
                     // name = '',
                     // multiplayer_modes = [],
@@ -180,6 +180,7 @@ export default withLocationQueryParams(function Home(props) {
                     popularity = null,
                     rating = null
                   } = gameInfo[appid] || {}
+                  releaseDate = releaseDate !== null ? new Date(releaseDate * 1000) : null
 
                   return (
                     <tr key={appid}>
@@ -200,9 +201,21 @@ export default withLocationQueryParams(function Home(props) {
                           {game.name}
                         </a>
                       </td>
-                      <td>{popularity !== null && popularity.toFixed(0) + '%'}</td>
-                      <td>{rating !== null && rating.toFixed(0) + '%'}</td>
-                      <td>{releaseDate !== null && new Date(releaseDate * 1000).getFullYear()}</td>
+                      <td>
+                        {popularity !== null && (
+                          <Badge variant={popularity > 15 ? 'success' : ''}>{popularity.toFixed(0)}%</Badge>
+                        )}
+                      </td>
+                      <td>
+                        {rating !== null && <Badge variant={rating > 80 ? 'success' : ''}>{rating.toFixed(0)}%</Badge>}
+                      </td>
+                      <td>
+                        {releaseDate !== null && (
+                          <Badge variant={releaseDate.getFullYear() > 2015 ? 'success' : ''}>
+                            {releaseDate.getFullYear()}
+                          </Badge>
+                        )}
+                      </td>
                       <td>{platforms.map((x) => PLATFORM_ICONS[x])}</td>
                       {/* <td>{multiplayer_modes.join(', ')}</td> */}
                       <td className="p-2 align-middle">{game.owners}</td>
