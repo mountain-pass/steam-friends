@@ -202,7 +202,7 @@ export default withLocationQueryParams(function Home(props) {
                       </td>
                       <td>{popularity !== null && popularity.toFixed(0) + '%'}</td>
                       <td>{rating !== null && rating.toFixed(0) + '%'}</td>
-                      <td>{releaseDate !== null && new Date(releaseDate * 1000).toLocaleDateString()}</td>
+                      <td>{releaseDate !== null && new Date(releaseDate * 1000).getFullYear()}</td>
                       <td>{platforms.map((x) => PLATFORM_ICONS[x])}</td>
                       {/* <td>{multiplayer_modes.join(', ')}</td> */}
                       <td className="p-2 align-middle">{game.owners}</td>
