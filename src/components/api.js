@@ -7,8 +7,7 @@ API.getSteamId = (username) => get(`/api/getSteamId?username=${username}`)
 API.getFriends = (steamId) => get(`/api/getFriends?steamid=${steamId}`)
 API.getFriendSummaries = (steamIds) => get(`/api/getFriendSummaries?sid=${steamIds.join('&sid=')}`)
 API.getSharedGames = (steamIds) => get(`/api/getSharedGames?sid=${steamIds.join('&sid=')}`)
-
-// const reduce = (arr, field) => arr.reduce((map, obj) => (map[obj[field]] = obj, map), {})
-// const arrSum = arr => arr.reduce((a,b) => a + b, 0)
+API.getGame = (steamappId, steamName) =>
+  axios.get('/api/getGame', { params: { steamappId, steamName } }).then((result) => result.data)
 
 module.exports = API

@@ -4,6 +4,7 @@ import usePromise from 'react-use-promise'
 import API from '../components/api'
 import { Input } from '../components/Form'
 import { FriendIcon, showName } from '../components/Friend'
+import { PLATFORM_ICONS } from '../components/igdb-staticdata'
 import Layout from '../components/layout'
 import withLocationQueryParams from '../components/withLocationQueryParams'
 import { navigate } from '@reach/router'
@@ -17,6 +18,7 @@ export default withLocationQueryParams(function Home(props) {
   const [filterNameRegex, setFilterNameRegex] = React.useState(null)
   const [filterOwnersRegex, setFilterOwnersRegex] = React.useState(null)
   const [steamIds, setSteamIds] = React.useState([])
+  const [gameInfo, setGameInfo] = React.useState({})
 
   const setFilterNameValue = (str) => {
     setFilterName(str)
@@ -51,6 +53,20 @@ export default withLocationQueryParams(function Home(props) {
 
   const { games, users } = gamesResponse || {}
 
+  // watch games list, if populated, retrieve game info...
+  React.useEffect(() => {
+    if (typeof games !== 'undefined' && games !== null) {
+      const entries = Object.entries(games)
+      console.debug(`retrieving game data - ${entries.length}`)
+      entries.map(([appid, game]) => {
+        // iteratively update game info as new data arrives...
+        API.getGame(appid, game.name).then((data) => {
+          setGameInfo((ps) => ({ ...ps, [appid]: data }))
+        })
+      })
+    }
+  }, [games])
+
   return (
     <Layout title="Compare Games">
       <Container fluid>
@@ -62,8 +78,13 @@ export default withLocationQueryParams(function Home(props) {
           <colgroup>
             <col style={{ width: '48px' }}></col>
             <col style={{ width: '25%', maxWidth: '1px' }}></col>
-            <col style={{ width: '150px' }}></col>
-            <col style={{ width: '150px' }}></col>
+            <col style={{ width: '50px' }}></col>
+            <col style={{ width: '50px' }}></col>
+            <col style={{ width: '50px' }}></col>
+            <col style={{ width: '50px' }}></col>
+            <col style={{ width: '50px' }}></col>
+            <col style={{ width: '50px' }}></col>
+            <col style={{ width: '50px' }}></col>
           </colgroup>
           {/* table headers */}
           <thead>
@@ -78,6 +99,7 @@ export default withLocationQueryParams(function Home(props) {
                   placeholder="Name..."
                 />
               </th>
+              <th colSpan="4" />
               <th>
                 <Input
                   nomargin
@@ -90,6 +112,7 @@ export default withLocationQueryParams(function Home(props) {
               {steamIds.map((steamId) => {
                 const { [steamId]: friend = null } = friendsById || {}
                 const { [steamId]: userData = { playtime: 0, game_count: 0 } } = users || {}
+                // friends header data...
                 return (
                   <th key={steamId + 'a'}>
                     {friendsState !== 'resolved' || gamesState !== 'resolved' ? (
@@ -111,7 +134,7 @@ export default withLocationQueryParams(function Home(props) {
             </tr>
             {/* titles */}
             <tr>
-              {'Logo,Name,Owners,Playtime (Mins)'.split(',').map((title) => (
+              {'Logo,Name,Popularity,Rating,Released,Platforms,# of Owners,Playtime (Mins)'.split(',').map((title) => (
                 <th key={title}>{title}</th>
               ))}
               {steamIds.map((steamId) => {
@@ -148,46 +171,64 @@ export default withLocationQueryParams(function Home(props) {
                     (filterOwnersRegex === null || game.owners === filterOwnersRegex)
                 )
                 .sort((a, b) => b[1].owners - a[1].owners || b[1].playtime - a[1].playtime)
-                .map(([appid, game]) => (
-                  <tr key={appid}>
-                    <td className="p-2 align-middle">
-                      <img
-                        src={`http://media.steampowered.com/steamcommunity/public/images/apps/${appid}/${game.icon}.jpg`}
-                      />
-                    </td>
-                    <td className="p-2 align-middle text-truncate">
-                      <a
-                        className="text-truncate"
-                        href={`https://store.steampowered.com/app/${appid}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {game.name}
-                      </a>
-                    </td>
-                    <td className="p-2 align-middle">{game.owners}</td>
-                    <td className="p-2 align-middle">{game.playtime.toLocaleString()}</td>
-                    {steamIds.map((steamId) => {
-                      const { [steamId]: { games: { [appid]: hasGame = null } = {} } = {} } = users || {}
-                      return (
-                        <td
-                          key={steamId + appid}
-                          className={
-                            hasGame !== null ? (hasGame.playtime === 0 ? 'bg-success transparent' : 'bg-success') : ''
-                          }
+                .map(([appid, game]) => {
+                  const {
+                    releaseDate = null,
+                    // name = '',
+                    // multiplayer_modes = [],
+                    platforms = [],
+                    popularity = null,
+                    rating = null
+                  } = gameInfo[appid] || {}
+
+                  return (
+                    <tr key={appid}>
+                      {/* Logo */}
+                      <td className="p-2 align-middle">
+                        <img
+                          src={`http://media.steampowered.com/steamcommunity/public/images/apps/${appid}/${game.icon}.jpg`}
+                        />
+                      </td>
+                      {/* Name */}
+                      <td className="p-2 align-middle text-truncate">
+                        <a
+                          className="text-truncate"
+                          href={`https://store.steampowered.com/app/${appid}`}
+                          target="_blank"
+                          rel="noreferrer"
                         >
-                          {hasGame !== null ? (
-                            <b>
-                              {(hasGame.playtime || 0).toLocaleString()} <small>mins</small>
-                            </b>
-                          ) : (
-                            ''
-                          )}
-                        </td>
-                      )
-                    })}
-                  </tr>
-                ))
+                          {game.name}
+                        </a>
+                      </td>
+                      <td>{popularity !== null && popularity.toFixed(0) + '%'}</td>
+                      <td>{rating !== null && rating.toFixed(0) + '%'}</td>
+                      <td>{releaseDate !== null && new Date(releaseDate * 1000).toLocaleDateString()}</td>
+                      <td>{platforms.map((x) => PLATFORM_ICONS[x])}</td>
+                      {/* <td>{multiplayer_modes.join(', ')}</td> */}
+                      <td className="p-2 align-middle">{game.owners}</td>
+                      <td className="p-2 align-middle">{game.playtime.toLocaleString()}</td>
+                      {steamIds.map((steamId) => {
+                        const { [steamId]: { games: { [appid]: hasGame = null } = {} } = {} } = users || {}
+                        return (
+                          <td
+                            key={steamId + appid}
+                            className={
+                              hasGame !== null ? (hasGame.playtime === 0 ? 'bg-success transparent' : 'bg-success') : ''
+                            }
+                          >
+                            {hasGame !== null ? (
+                              <b>
+                                {(hasGame.playtime || 0).toLocaleString()} <small>mins</small>
+                              </b>
+                            ) : (
+                              ''
+                            )}
+                          </td>
+                        )
+                      })}
+                    </tr>
+                  )
+                })
             ) : null}
           </tbody>
         </Table>

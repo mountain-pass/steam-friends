@@ -12,7 +12,7 @@ API.searchGame = async (name) => {
       Accept: 'application/json',
       'user-key': API_KEY
     },
-    data: `search "${name}"; fields id,name,summary,first_release_date,multiplayer_modes,platforms,rating; where platforms = (6,14); limit 50;`
+    data: `search "${name}"; fields id,name,summary,first_release_date,multiplayer_modes,platforms,popularity,rating; where platforms = (6,14); limit 1;`
   }).then((response) => response.data)
 }
 
