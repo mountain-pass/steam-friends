@@ -217,8 +217,10 @@ export default withLocationQueryParams(function Home(props) {
                         )}
                         {single && <Badge variant="light">Single</Badge>}
                       </td>
-                      <td>{rating && <Badge variant={rating >= 80 ? 'success' : ''}>{rating}%</Badge>}</td>
-                      <td>
+                      <td className="text-center">
+                        {rating && <Badge variant={rating >= 80 ? 'success' : ''}>{rating}%</Badge>}
+                      </td>
+                      <td className="text-center">
                         {releaseYear && <Badge variant={releaseYear > 2015 ? 'success' : ''}>{releaseYear}</Badge>}
                       </td>
                       <td>
@@ -233,8 +235,8 @@ export default withLocationQueryParams(function Home(props) {
                           </Badge>
                         )}
                       </td>
-                      <td className="p-2 align-middle">{game.owners}</td>
-                      <td className="p-2 align-middle">{game.playtime.toLocaleString()}</td>
+                      <td className="p-2 align-middle text-center">{game.owners}</td>
+                      <td className="p-2 align-middle text-right">{game.playtime.toLocaleString()}</td>
                       {steamIds.map((steamId) => {
                         const { [steamId]: { games: { [appid]: ownedGame = null } = {} } = {} } = users || {}
                         const hasGame = ownedGame !== null
@@ -247,8 +249,8 @@ export default withLocationQueryParams(function Home(props) {
                             style={{
                               background: hasGame
                                 ? playtime === 0
-                                  ? '#b4e0bd'
-                                  : `linear-gradient(to right, var(--success) ${playtimePercentage}%, #b4e0bd ${playtimePercentage}%)`
+                                  ? '#97cca288'
+                                  : `linear-gradient(to right, var(--success) ${playtimePercentage}%, #97cca288 ${playtimePercentage}%)`
                                 : 'transparent'
                             }}
                           >
