@@ -4,11 +4,11 @@ import usePromise from 'react-use-promise'
 import API from '../components/api'
 import { Input } from '../components/Form'
 import { FriendIcon, showName } from '../components/Friend'
-import { PLATFORM_ICONS } from '../components/igdb-staticdata'
 import Layout from '../components/layout'
 import withLocationQueryParams from '../components/withLocationQueryParams'
 import { navigate } from '@reach/router'
 import { Link } from 'gatsby'
+import { FaLinux, FaWindows, FaApple } from 'react-icons/fa'
 
 const navBack = () => navigate(-1)
 
@@ -64,7 +64,7 @@ export default withLocationQueryParams(function Home(props) {
         // find largest playtime...
         tmpmaxplaytime = Math.max(tmpmaxplaytime, game.playtime)
         // iteratively update game info as new data arrives...
-        API.getGame(appid, game.name).then((data) => {
+        API.getGame(appid).then((data) => {
           setGameInfo((ps) => ({ ...ps, [appid]: data }))
         })
       })
@@ -79,10 +79,11 @@ export default withLocationQueryParams(function Home(props) {
           Go Back
         </Button>
         <h1>Compare Games</h1>
-        <Table className="bg-white mt-3" responsive>
+        <Table className="bg-white mt-3" responsive hover>
           <colgroup>
             <col style={{ width: '48px' }}></col>
             <col style={{ width: '25%', maxWidth: '1px' }}></col>
+            <col style={{ width: '50px' }}></col>
             <col style={{ width: '50px' }}></col>
             <col style={{ width: '50px' }}></col>
             <col style={{ width: '50px' }}></col>
@@ -97,6 +98,7 @@ export default withLocationQueryParams(function Home(props) {
             <tr>
               <th />
               <th>
+                {/* FILTER BY GAME NAME */}
                 <Input
                   nomargin
                   value={filterName}
@@ -104,13 +106,14 @@ export default withLocationQueryParams(function Home(props) {
                   placeholder="Name..."
                 />
               </th>
-              <th colSpan="4" />
+              <th colSpan="5" />
               <th>
+                {/* FILTER BY # OF OWNERS */}
                 <Input
                   nomargin
                   value={filterOwners}
                   onChange={(e) => setFilterOwnersValue(e.target.value)}
-                  placeholder="Owners..."
+                  placeholder="#"
                 />
               </th>
               <th />
@@ -139,9 +142,11 @@ export default withLocationQueryParams(function Home(props) {
             </tr>
             {/* titles */}
             <tr>
-              {'Logo,Name,Popularity,Rating,Released,Platforms,# of Owners,Playtime (Mins)'.split(',').map((title) => (
-                <th key={title}>{title}</th>
-              ))}
+              {'Logo,Name,Multiplayer,Rating,Released,Platforms,Price (AU$),Owners (Count),Playtime (Mins)'
+                .split(',')
+                .map((title) => (
+                  <th key={title}>{title}</th>
+                ))}
               {steamIds.map((steamId) => {
                 const { [steamId]: friend = {} } = friendsById || {}
                 return (
@@ -177,15 +182,13 @@ export default withLocationQueryParams(function Home(props) {
                 )
                 .sort((a, b) => b[1].owners - a[1].owners || b[1].playtime - a[1].playtime)
                 .map(([appid, game]) => {
-                  let {
-                    releaseDate = null,
-                    // name = '',
-                    // multiplayer_modes = [],
-                    platforms = [],
-                    popularity = null,
-                    rating = null
+                  const {
+                    modes: { single, multi } = {},
+                    priceAudCents,
+                    platforms: { win, lin, mac } = {},
+                    rating,
+                    releaseYear
                   } = gameInfo[appid] || {}
-                  releaseDate = releaseDate !== null ? new Date(releaseDate * 1000) : null
 
                   return (
                     <tr key={appid}>
@@ -207,22 +210,29 @@ export default withLocationQueryParams(function Home(props) {
                         </a>
                       </td>
                       <td>
-                        {popularity !== null && (
-                          <Badge variant={popularity >= 15 ? 'success' : ''}>{popularity.toFixed(0)}%</Badge>
+                        {multi && (
+                          <Badge variant="success" className="mb-1 mr-1">
+                            Multi
+                          </Badge>
                         )}
+                        {single && <Badge variant="light">Single</Badge>}
+                      </td>
+                      <td>{rating && <Badge variant={rating >= 80 ? 'success' : ''}>{rating}%</Badge>}</td>
+                      <td>
+                        {releaseYear && <Badge variant={releaseYear > 2015 ? 'success' : ''}>{releaseYear}</Badge>}
                       </td>
                       <td>
-                        {rating !== null && <Badge variant={rating >= 75 ? 'success' : ''}>{rating.toFixed(0)}%</Badge>}
+                        {win && <FaWindows />}
+                        {mac && <FaApple />}
+                        {lin && <FaLinux />}
                       </td>
-                      <td>
-                        {releaseDate !== null && (
-                          <Badge variant={releaseDate.getFullYear() > 2015 ? 'success' : ''}>
-                            {releaseDate.getFullYear()}
+                      <td className="text-right">
+                        {priceAudCents >= 0 && (
+                          <Badge variant={priceAudCents === 0 ? 'success' : ''}>
+                            $ {(priceAudCents / 100).toFixed(2)}
                           </Badge>
                         )}
                       </td>
-                      <td>{platforms.map((x) => PLATFORM_ICONS[x])}</td>
-                      {/* <td>{multiplayer_modes.join(', ')}</td> */}
                       <td className="p-2 align-middle">{game.owners}</td>
                       <td className="p-2 align-middle">{game.playtime.toLocaleString()}</td>
                       {steamIds.map((steamId) => {

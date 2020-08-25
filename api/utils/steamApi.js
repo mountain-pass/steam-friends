@@ -16,6 +16,8 @@ API.getOwnedGames = (steamId) =>
   get(
     `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${steamApiKey}&steamid=${steamId}&include_appinfo=1&include_played_free_games=1`
   )
+API.getGameData = (appid, currencyConverter = 'AU', language = 'english') =>
+  get(`http://store.steampowered.com/api/appdetails/?appids=${appid}&cc=${currencyConverter}&l=${language}&v=1`)
 
 // const reduce = (arr, field) => arr.reduce((map, obj) => (map[obj[field]] = obj, map), {})
 // const arrSum = arr => arr.reduce((a,b) => a + b, 0)
