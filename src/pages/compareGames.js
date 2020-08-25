@@ -19,6 +19,7 @@ export default withLocationQueryParams(function Home(props) {
   const [filterOwnersRegex, setFilterOwnersRegex] = React.useState(null)
   const [steamIds, setSteamIds] = React.useState([])
   const [gameInfo, setGameInfo] = React.useState({})
+  const [maxplaytime, setMaxplaytime] = React.useState(1)
 
   const setFilterNameValue = (str) => {
     setFilterName(str)
@@ -58,12 +59,16 @@ export default withLocationQueryParams(function Home(props) {
     if (typeof games !== 'undefined' && games !== null) {
       const entries = Object.entries(games)
       console.debug(`retrieving game data - ${entries.length}`)
-      entries.map(([appid, game]) => {
+      let tmpmaxplaytime = 0
+      entries.forEach(([appid, game]) => {
+        // find largest playtime...
+        tmpmaxplaytime = Math.max(tmpmaxplaytime, game.playtime)
         // iteratively update game info as new data arrives...
         API.getGame(appid, game.name).then((data) => {
           setGameInfo((ps) => ({ ...ps, [appid]: data }))
         })
       })
+      setMaxplaytime(tmpmaxplaytime)
     }
   }, [games])
 
@@ -203,11 +208,11 @@ export default withLocationQueryParams(function Home(props) {
                       </td>
                       <td>
                         {popularity !== null && (
-                          <Badge variant={popularity > 15 ? 'success' : ''}>{popularity.toFixed(0)}%</Badge>
+                          <Badge variant={popularity >= 15 ? 'success' : ''}>{popularity.toFixed(0)}%</Badge>
                         )}
                       </td>
                       <td>
-                        {rating !== null && <Badge variant={rating > 80 ? 'success' : ''}>{rating.toFixed(0)}%</Badge>}
+                        {rating !== null && <Badge variant={rating >= 75 ? 'success' : ''}>{rating.toFixed(0)}%</Badge>}
                       </td>
                       <td>
                         {releaseDate !== null && (
@@ -221,20 +226,26 @@ export default withLocationQueryParams(function Home(props) {
                       <td className="p-2 align-middle">{game.owners}</td>
                       <td className="p-2 align-middle">{game.playtime.toLocaleString()}</td>
                       {steamIds.map((steamId) => {
-                        const { [steamId]: { games: { [appid]: hasGame = null } = {} } = {} } = users || {}
+                        const { [steamId]: { games: { [appid]: ownedGame = null } = {} } = {} } = users || {}
+                        const hasGame = ownedGame !== null
+                        const playtime = hasGame ? ownedGame.playtime : 0
+                        const playtimePercentage = playtime > 0 ? parseInt((playtime / maxplaytime) * 100) : null
                         return (
                           <td
                             key={steamId + appid}
-                            className={
-                              hasGame !== null ? (hasGame.playtime === 0 ? 'bg-success transparent' : 'bg-success') : ''
-                            }
+                            className={`font-weight-bold ${hasGame && playtime === 0 ? 'transparent' : ''}`}
+                            style={{
+                              background: hasGame
+                                ? playtime === 0
+                                  ? '#b4e0bd'
+                                  : `linear-gradient(to right, var(--success) ${playtimePercentage}%, #b4e0bd ${playtimePercentage}%)`
+                                : 'transparent'
+                            }}
                           >
-                            {hasGame !== null ? (
-                              <b>
-                                {(hasGame.playtime || 0).toLocaleString()} <small>mins</small>
-                              </b>
-                            ) : (
-                              ''
+                            {hasGame && (
+                              <>
+                                {playtime.toLocaleString()} <small>mins</small>
+                              </>
                             )}
                           </td>
                         )
