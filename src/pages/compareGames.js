@@ -9,8 +9,19 @@ import withLocationQueryParams from '../components/withLocationQueryParams'
 import { navigate } from '@reach/router'
 import { Link } from 'gatsby'
 import { FaLinux, FaWindows, FaApple } from 'react-icons/fa'
+import {
+  RELEASE_YEAR_FILTERS,
+  PRICE_CENTS_FILTERS,
+  RATING_FILTERS,
+  PLATFORM_FILTERS,
+  MULTIPLAYER_FILTERS
+} from '../components/custom/Filters'
+import SelectDropdown from '../components/custom/SelectDropdown'
 
 const navBack = () => navigate(-1)
+
+// N.B. default state still parses in previous state for some reason... thus 2x functions.
+const FILTER_ALLOW_ALL = () => () => true
 
 export default withLocationQueryParams(function Home(props) {
   const [filterName, setFilterName] = React.useState('')
@@ -20,6 +31,13 @@ export default withLocationQueryParams(function Home(props) {
   const [steamIds, setSteamIds] = React.useState([])
   const [gameInfo, setGameInfo] = React.useState({})
   const [maxplaytime, setMaxplaytime] = React.useState(1)
+
+  // filters
+  const [multiplayerFilter, setMultiplayerFilter] = React.useState(FILTER_ALLOW_ALL)
+  const [ratingFilter, setRatingFilter] = React.useState(FILTER_ALLOW_ALL)
+  const [releaseYearFilter, setReleaseYearFilter] = React.useState(FILTER_ALLOW_ALL)
+  const [platformFilter, setPlatformFilter] = React.useState(FILTER_ALLOW_ALL)
+  const [priceFilter, setPriceFilter] = React.useState(FILTER_ALLOW_ALL)
 
   const setFilterNameValue = (str) => {
     setFilterName(str)
@@ -100,16 +118,39 @@ export default withLocationQueryParams(function Home(props) {
               <th>
                 {/* FILTER BY GAME NAME */}
                 <Input
+                  size="md"
                   nomargin
                   value={filterName}
                   onChange={(e) => setFilterNameValue(e.target.value)}
                   placeholder="Name..."
                 />
               </th>
-              <th colSpan="5" />
+              {/* Multiplayer,Rating,Released,Platforms,Price */}
+              <th>
+                <SelectDropdown
+                  options={MULTIPLAYER_FILTERS}
+                  onValueChange={(fn) => setMultiplayerFilter((ps) => fn)}
+                />
+              </th>
+              <th>
+                <SelectDropdown options={RATING_FILTERS} onValueChange={(fn) => setRatingFilter((ps) => fn)} />
+              </th>
+              <th>
+                <SelectDropdown
+                  options={RELEASE_YEAR_FILTERS}
+                  onValueChange={(fn) => setReleaseYearFilter((ps) => fn)}
+                />
+              </th>
+              <th>
+                <SelectDropdown options={PLATFORM_FILTERS} onValueChange={(fn) => setPlatformFilter((ps) => fn)} />
+              </th>
+              <th>
+                <SelectDropdown options={PRICE_CENTS_FILTERS} onValueChange={(fn) => setPriceFilter((ps) => fn)} />
+              </th>
               <th>
                 {/* FILTER BY # OF OWNERS */}
                 <Input
+                  size="md"
                   nomargin
                   value={filterOwners}
                   onChange={(e) => setFilterOwnersValue(e.target.value)}
@@ -175,20 +216,28 @@ export default withLocationQueryParams(function Home(props) {
               </tr>
             ) : gamesState === 'resolved' && games ? (
               Object.entries(games)
+                .map(([appid, game]) => ({ appid, ...game, ...gameInfo[appid] }))
                 .filter(
-                  ([appid, game]) =>
+                  (game) =>
                     (filterNameRegex === null || game.name.match(filterNameRegex)) &&
-                    (filterOwnersRegex === null || game.owners === filterOwnersRegex)
+                    (filterOwnersRegex === null || game.owners === filterOwnersRegex) &&
+                    (console.log('multiplayerFilter' + typeof multiplayerFilter) || true) &&
+                    multiplayerFilter(game) &&
+                    ratingFilter(game) &&
+                    releaseYearFilter(game) &&
+                    platformFilter(game) &&
+                    priceFilter(game)
                 )
-                .sort((a, b) => b[1].owners - a[1].owners || b[1].playtime - a[1].playtime)
-                .map(([appid, game]) => {
+                .sort((a, b) => b.owners - a.owners || b.playtime - a.playtime)
+                .map((game) => {
                   const {
+                    appid,
                     modes: { single, multi } = {},
                     priceAudCents,
                     platforms: { win, lin, mac } = {},
                     rating,
                     releaseYear
-                  } = gameInfo[appid] || {}
+                  } = game
 
                   return (
                     <tr key={appid}>
