@@ -1,0 +1,51 @@
+html {
+  scroll-behavior: smooth;
+}
+html,
+body {
+  width: 100% !important;
+}
+html {
+  height: 100% !important;
+}
+body {
+  background: #333a40;
+  min-height: 100% !important;
+  font-family: 'Open Sans', sans-serif;
+  font-display: swap;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body,
+body > div,
+body > div > #gatsby-focus-wrapper,
+body > div > #gatsby-focus-wrapper > div[tabindex][role='group'][style='outline: none;']:not([class]) {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+.text-tiny {
+  font-size: 0.8rem;
+}
+.text-large {
+  font-size: 1.2rem;
+}
+.highlight {
+  border: 1px solid red;
+}
+.transparent {
+  opacity: 0.5;
+  background: #ebebeb;
+}
+.transparent:hover {
+  opacity: 1;
+}
+.pointer {
+  cursor: pointer;
+}
+.clickthru {
+  pointer-events: none;
+}
+.text-truncate {
+  max-width: 1px;
+}
